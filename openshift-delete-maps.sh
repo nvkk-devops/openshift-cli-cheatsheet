@@ -1,6 +1,8 @@
 identify_configmaps(){
     # for i in $(seq 1 $END); do echo $i; done
 
+    # oc delete configmap -l owner!=application
+    
     for i in `oc get configmap --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep "bc-"` 
     do 
         echo $i; 
@@ -13,6 +15,7 @@ delete_completed_pod(){
 
     # kubectl get pods --field-selector=status.phase!=Running --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'
 
+    # oc get po --field-selector=status.phase!=Running -o name
     for i in `oc get po --field-selector=status.phase!=Running --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'` 
     do 
         echo $i; 
@@ -22,7 +25,9 @@ delete_completed_pod(){
 
 delete_desired_zero_replicas(){
     # kubectl get pods --field-selector=status.phase!=Running --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'
-
+    
+    # oc delete rc -l app=notification-dc --field-selector=status.replicas==0
+    
     for i in `oc get rc --field-selector=status.replicas==0 --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'` 
     do 
         echo $i; 
